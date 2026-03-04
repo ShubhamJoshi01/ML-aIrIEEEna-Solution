@@ -80,5 +80,22 @@ y_pred = xgb.predict(X_test)
 print("Acuuracy:", accuracy_score(y_test,y_pred))
 
 print(classification_report(y_test, y_pred))
-    
 
+
+
+test_df = pd.read_csv(r"alrIEEEna_26_dataset\ML Challenge Dataset\TEST.csv")
+
+test_ids = test_df["ID"]
+
+X_test_final = test_df.drop("ID", axis=1)
+
+
+test_predictions = xgb.predict(X_test_final)
+
+
+submission = pd.DataFrame({
+    "ID": test_ids,
+    "CLASS": test_predictions
+})
+
+submission.to_csv("FINAL.csv", index=False)
