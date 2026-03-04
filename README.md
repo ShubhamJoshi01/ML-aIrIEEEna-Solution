@@ -48,15 +48,9 @@ F1-score
 XGBoost showed slightly better performance for this dataset.
 
 Project Structure:
-ML-aIrIEEEna-Solution/
-│
-├── alrIEEEna_26_dataset/
-│   ├── TRAIN.csv
-│   ├── TEST.csv
-│   ├── train_xgboost.py
-│
-├── FINAL.csv
-├── README.md
+
+<img width="270" height="228" alt="image" src="https://github.com/user-attachments/assets/51b19419-8d93-41dd-91e0-cf04665617b2" />
+
 
 Installation and Setup
 1. Clone the Repository "https://github.com/ShubhamJoshi01/ML-aIrIEEEna-Solution"
