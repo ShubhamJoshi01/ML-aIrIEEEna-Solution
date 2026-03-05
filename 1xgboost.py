@@ -59,6 +59,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from xgboost import XGBClassifier
 import joblib
+from sklearn.model_selection import GridSearchCV
 
 # visualize feature distributions
 plt.figure(figsize=(12,6))
@@ -77,22 +78,39 @@ X_train, X_test, y_train, y_test = train_test_split(
     x, y, test_size=0.2, random_state=42
 )
 
-# initialize XGBoost classifier
+# initialize XGBoost classifier (base model)
 xgb = XGBClassifier(
-    n_estimators=500,
-    max_depth=6,
-    learning_rate=0.05,
-    subsample=0.8,
-    colsample_bytree=0.8,
     random_state=42,
     eval_metric='logloss'
 )
+parameter_grid={
+    "n_estimators":[200,400,600],
+    "max_depth":[4,6,8],
+    "learning_rate":[0.01,0.05,0.1],
+    "subsample": [0.7,0.8,0.9],
+    "colsample_bytree":[0.7,0.8,0.9]
+}
+
+#performing cress validation gridsearch method
+grid_search=GridSearchCV(
+    estimator=xgb,
+    param_grid=parameter_grid,
+    scoring="f1",
+    cv=3,
+    verbose=1,
+    n_jobs=-1
+)
+
+#train model with different parameters
+grid_search.fit(X_train,y_train)
+
+best_model=grid_search.best_estimator_
 
 # train XGBoost model
-xgb.fit(X_train, y_train)
+best_model.fit(X_train, y_train)
 
 # predict validation data
-y_pred = xgb.predict(X_test)
+y_pred = best_model.predict(X_test)
 
 # print XGBoost accuracy
 print("Acuuracy:", accuracy_score(y_test,y_pred))
@@ -102,7 +120,7 @@ print(classification_report(y_test, y_pred))
 
 
 # save trained model for reuse
-joblib.dump(xgb, "trained_model.pkl")
+joblib.dump(best_model, "trained_model.pkl")
 
 
 # load test dataset for prediction
@@ -116,7 +134,7 @@ X_test_final = test_df.drop("ID", axis=1)
 
 
 # generate predictions for test dataset
-test_predictions = xgb.predict(X_test_final)
+test_predictions = best_model.predict(X_test_final)
 
 
 # create submission dataframe
